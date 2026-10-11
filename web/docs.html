@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NTI Registry — Docs</title>
+<style>
+body{font-family:system-ui;background:#0a0a0a;color:#eee;padding:1.5rem;max-width:900px;margin:auto;line-height:1.7}
+h1,h2,h3{color:#fff}
+code{background:#111;padding:.15rem .45rem;border-radius:5px;color:#4ade80;font-family:monospace}
+pre{background:#111;padding:1rem;border-radius:10px;overflow-x:auto;color:#4ade80;border:1px solid #222}
+a{color:#22d3ee}
+</style>
+</head>
+<body>
+<h1>NTI Registry Documentation</h1>
+
+
+<h2>Endpoints</h2>
+<table style="width:100%;border-collapse:collapse">
+<thead><tr style="border-bottom:1px solid #222"><th style="text-align:left;padding:.6rem">Method</th><th style="text-align:left;padding:.6rem">Path</th><th style="text-align:left;padding:.6rem">Purpose</th></tr></thead>
+<tbody>
+<tr><td style="padding:.5rem"><code>POST</code></td><td><code>/api/register</code></td><td>Submit a signed entry</td></tr>
+<tr><td style="padding:.5rem"><code>GET</code></td><td><code>/api/list</code></td><td>Full list of entries</td></tr>
+<tr><td style="padding:.5rem"><code>GET</code></td><td><code>/api/verify?id=...</code></td><td>Verify one entry</td></tr>
+<tr><td style="padding:.5rem"><code>GET</code></td><td><code>/api/search?q=...&category=...</code></td><td>Filter entries</td></tr>
+<tr><td style="padding:.5rem"><code>GET</code></td><td><code>/api/stats</code></td><td>Public counters</td></tr>
+<tr><td style="padding:.5rem"><code>GET</code></td><td><code>/api/health</code></td><td>Health check</td></tr>
+<tr><td style="padding:.5rem"><code>GET</code></td><td><code>/api/federation</code></td><td>Federation manifest</td></tr>
+<tr><td style="padding:.5rem"><code>POST</code></td><td><code>/api/federation/register</code></td><td>Register a peer registry</td></tr>
+<tr><td style="padding:.5rem"><code>GET</code></td><td><code>/api/sync?from=...</code></td><td>Pull entries from a peer</td></tr>
+</tbody>
+</table>
+
+
+<h2>Entry Format (NTI-Registry-Entry/1)</h2>
+<pre>{
+  "spec": "NTI-Registry-Entry/1",
+  "id": "uuid-v4",
+  "name": "langchain-nti",
+  "version": "0.1.0",
+  "description": "Drop-in post-quantum security for LangChain agents",
+  "category": "framework",
+  "repo_url": "https://github.com/abisheakp197/langchain-nti",
+  "badge_url": "https://nti-badge-svs1.vercel.app",
+  "docs_url": "",
+  "nti_score": 98,
+  "owner_contact": "you@example.com",
+  "registered_at": "2026-01-15T10:00:00Z",
+  "issuer_pubkey": "...",
+  "signature": "...",
+  "cert_hash": "..."
+}</pre>
+
+
+<h2>Why Cryptographic Proof</h2>
+<p>Existing registries let anyone claim anything. This registry requires:</p>
+<ul>
+<li><strong>Dilithium5 signature</strong> by the tool owner</li>
+<li><strong>Hash integrity</strong> (SHA-256 over canonical JSON)</li>
+<li><strong>Cross-verification</strong> against a live badge node</li>
+</ul>
+
+
+<h2>Federation</h2>
+<p>Any organization can run their own registry node. Two nodes sync by:</p>
+<pre>POST /api/federation/register
+{ "url": "https://peer.example.com", "name": "peer-name", "kind": "registry" }</pre>
+<p>Then pull entries from a peer:</p>
+<pre>GET /api/sync?from=https://peer.example.com</pre>
+
+
+<h2>Neutrality</h2>
+<p>No central authority. No silent edits. Every entry is signed. Every change is a new entry. Registry operators do not vouch for entries — they only forward signed data.</p>
+
+
+<p><a href="/">Back</a></p>
+</body>
+</html>

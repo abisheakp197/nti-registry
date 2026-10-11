@@ -1,0 +1,16 @@
+[project]
+name = "nti-registry"
+version = "0.1.0"
+description = "Federated, cryptographically signed directory of NTI-1 certified tools"
+requires-python = ">=3.11"
+dependencies = [
+    "ube-foundation>=0.1.0",
+    "httpx>=0.27.0",
+    "click>=8.1.0",
+    "rich>=13.0.0",
+]
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
