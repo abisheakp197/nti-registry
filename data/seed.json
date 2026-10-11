@@ -1,0 +1,200 @@
+[
+  {
+    "name": "ube-foundation",
+    "version": "0.1.7",
+    "description": "Core NTI Python SDK. Rust engine with PyO3 bindings. Dilithium5 signatures, Kyber1024 KEM, TrustEngine policy evaluation.",
+    "category": "sdk",
+    "repo_url": "https://github.com/abisheakp197/Neutral-Trust-Infrastructure",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "https://abisheakp197.github.io/nti-spec/",
+    "nti_score": 98,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "langchain-nti",
+    "version": "0.1.0",
+    "description": "Drop-in post-quantum security for LangChain agents. Enforces Dilithium5 signatures, zero-trust capability bounds, BFT consensus, and Merkle-chained audit trails.",
+    "category": "framework",
+    "repo_url": "https://github.com/abisheakp197/langchain-nti",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 97,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "crewai-nti",
+    "version": "0.1.0",
+    "description": "Drop-in post-quantum security for CrewAI agents. Guardrail middleware for cryptographic identity and zero-trust bounds.",
+    "category": "framework",
+    "repo_url": "https://github.com/abisheakp197/crewai-nti",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 97,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "autogen-nti",
+    "version": "0.1.0",
+    "description": "Drop-in post-quantum security for AutoGen and Microsoft Agent Framework. Enforces cryptographic identity across agent crews.",
+    "category": "framework",
+    "repo_url": "https://github.com/abisheakp197/autogen-nti",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 97,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "nti-scanner",
+    "version": "0.1.0",
+    "description": "Professional SAST tool for AI agent security. AST analysis, taint tracking, CWE mapping, 19 rules, SARIF output.",
+    "category": "scanner",
+    "repo_url": "https://github.com/abisheakp197/nti-scanner",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 96,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "nti-badge",
+    "version": "0.1.0",
+    "description": "Federated, post-quantum signed compliance certificates for AI agent repos. OIDC-verified, Dilithium5-signed, offline-verifiable.",
+    "category": "badge",
+    "repo_url": "https://github.com/abisheakp197/nti-badge",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 96,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "nti-attack",
+    "version": "0.1.0",
+    "description": "Executable, Dilithium5-signed attack framework for AI agents. 10 attacks across 6 categories, real PoCs, signed attestations.",
+    "category": "attack",
+    "repo_url": "https://github.com/abisheakp197/nti-attack-library",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "https://abisheakp197.github.io/nti-spec/",
+    "nti_score": 98,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "langchain-nti",
+    "version": "0.1.0",
+    "description": "Drop-in post-quantum security for LangChain agents. Enforces Dilithium5 signatures, zero-trust capability bounds, BFT consensus, and Merkle-chained audit trails.",
+    "category": "framework",
+    "repo_url": "https://github.com/abisheakp197/langchain-nti",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 97,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "crewai-nti",
+    "version": "0.1.0",
+    "description": "Drop-in post-quantum security for CrewAI agents. Guardrail middleware for cryptographic identity and zero-trust bounds.",
+    "category": "framework",
+    "repo_url": "https://github.com/abisheakp197/crewai-nti",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 97,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "autogen-nti",
+    "version": "0.1.0",
+    "description": "Drop-in post-quantum security for AutoGen and Microsoft Agent Framework. Enforces cryptographic identity across agent crews.",
+    "category": "framework",
+    "repo_url": "https://github.com/abisheakp197/autogen-nti",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 97,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "nti-scanner",
+    "version": "0.1.0",
+    "description": "Professional SAST tool for AI agent security. AST analysis, taint tracking, CWE mapping, 19 rules, SARIF output.",
+    "category": "scanner",
+    "repo_url": "https://github.com/abisheakp197/nti-scanner",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 96,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "nti-badge",
+    "version": "0.1.0",
+    "description": "Federated, post-quantum signed compliance certificates for AI agent repos. OIDC-verified, Dilithium5-signed, offline-verifiable.",
+    "category": "badge",
+    "repo_url": "https://github.com/abisheakp197/nti-badge",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 96,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "nti-attack",
+    "version": "0.1.0",
+    "description": "Executable, Dilithium5-signed attack framework for AI agents. 10 attacks across 6 categories, real PoCs, signed attestations.",
+    "category": "attack",
+    "repo_url": "https://github.com/abisheakp197/nti-attack-library",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 95,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "nti-benchmark",
+    "version": "0.1.0",
+    "description": "Verifiable security benchmark comparing AI agent frameworks with and without NTI protection. Signed, offline-verifiable reports.",
+    "category": "benchmark",
+    "repo_url": "https://github.com/abisheakp197/nti-benchmark",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 95,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "nti-spec",
+    "version": "1.0.0-draft",
+    "description": "NTI-1: The neutral standard for post-quantum trust and governance of autonomous AI agents.",
+    "category": "spec",
+    "repo_url": "https://github.com/abisheakp197/nti-spec",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "https://abisheakp197.github.io/nti-spec/",
+    "nti_score": 100,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "nti-agent-template",
+    "version": "1.0.0",
+    "description": "Starter template for building secure AI agents with NTI post-quantum security pre-installed.",
+    "category": "template",
+    "repo_url": "https://github.com/abisheakp197/nti-agent-template",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 94,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "nti-fastapi-template",
+    "version": "1.0.0",
+    "description": "Production FastAPI backend template with NTI post-quantum security for AI agents.",
+    "category": "template",
+    "repo_url": "https://github.com/abisheakp197/nti-fastapi-template",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 94,
+    "owner_contact": "abisheakp197@gmail.com"
+  },
+  {
+    "name": "nti-crewai-template",
+    "version": "1.0.0",
+    "description": "Starter template for secure CrewAI multi-agent systems with NTI post-quantum security.",
+    "category": "template",
+    "repo_url": "https://github.com/abisheakp197/nti-crewai-template",
+    "badge_url": "https://nti-badge-svs1.vercel.app",
+    "docs_url": "",
+    "nti_score": 94,
+    "owner_contact": "abisheakp197@gmail.com"
+  }
+]

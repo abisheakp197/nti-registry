@@ -1,0 +1,37 @@
+name: Test Suite
+
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install ube-foundation
+          pip install pytest httpx click rich
+      - name: API surface (must run first)
+        run: python -m pytest tests/api_surface -v
+      - name: Unit tests
+        run: python -m pytest tests/unit -v
+      - name: Contract tests
+        run: python -m pytest tests/contract -v
+      - name: Integration tests
+        run: python -m pytest tests/integration -v
+      - name: Security tests
+        run: python -m pytest tests/security -v
+      - name: Failure tests
+        run: python -m pytest tests/failure -v
+      - name: Determinism tests
+        run: python -m pytest tests/determinism -v

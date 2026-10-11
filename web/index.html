@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NTI Registry — Verified AI Agent Security</title>
+<style>
+:root{--bg:#0a0a0a;--fg:#eee;--muted:#888;--accent:#4ade80;--card:#111;--border:#222}
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--fg);padding:1.5rem;max-width:1000px;margin:auto;line-height:1.6}
+h1,h2,h3{color:#fff;line-height:1.25}
+h1{font-size:2rem;margin-bottom:.5rem}
+code{background:var(--card);padding:.15rem .45rem;border-radius:5px;color:var(--accent);font-family:ui-monospace,monospace;font-size:.92em}
+pre{background:var(--card);padding:1rem;border-radius:10px;overflow-x:auto;color:var(--accent);border:1px solid var(--border)}
+a{color:#22d3ee;text-decoration:none}
+a:hover{text-decoration:underline}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0}
+.stats{display:flex;gap:1rem;flex-wrap:wrap}
+.stat{flex:1;min-width:120px;padding:.75rem;border:1px solid var(--border);border-radius:8px}
+.stat-value{font-size:1.8rem;font-weight:700;color:var(--accent)}
+.stat-label{font-size:.8rem;color:var(--muted);text-transform:uppercase}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.9rem}
+th,td{text-align:left;padding:.6rem;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:500;font-size:.8rem;text-transform:uppercase}
+.search-bar{display:flex;gap:.5rem;margin:1rem 0}
+.search-bar input{flex:1;padding:.7rem;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:6px}
+.search-bar select{padding:.7rem;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:6px}
+.pill{display:inline-block;padding:.15rem .6rem;border-radius:999px;font-size:.75rem;background:#1a1a1a;border:1px solid var(--border);color:var(--accent)}
+.status-ok{color:#4ade80}
+.status-fail{color:#ef4444}
+</style>
+</head>
+<body>
+
+
+<h1>NTI Registry</h1>
+<p style="color:var(--muted)">Federated, cryptographically signed directory of every NTI-1 certified AI agent tool.</p>
+
+
+<div class="card">
+<h3>Live stats</h3>
+<div class="stats" id="stats">
+  <div class="stat"><div class="stat-value" id="stat-entries">—</div><div class="stat-label">Entries</div></div>
+  <div class="stat"><div class="stat-value" id="stat-verified">—</div><div class="stat-label">Cross-verified</div></div>
+  <div class="stat"><div class="stat-value" id="stat-avg">—</div><div class="stat-label">Avg Score</div></div>
+  <div class="stat"><div class="stat-value" id="stat-peers">—</div><div class="stat-label">Peers</div></div>
+</div>
+</div>
+
+
+<div class="search-bar">
+  <input id="q" placeholder="Search tools, frameworks, libraries...">
+  <select id="category">
+    <option value="">All categories</option>
+    <option value="framework">Framework</option>
+    <option value="scanner">Scanner</option>
+    <option value="badge">Badge</option>
+    <option value="attack">Attack</option>
+    <option value="benchmark">Benchmark</option>
+    <option value="template">Template</option>
+    <option value="spec">Spec</option>
+    <option value="sdk">SDK</option>
+    <option value="other">Other</option>
+  </select>
+  <button onclick="loadEntries()" style="padding:.7rem 1.2rem;background:var(--accent);color:#000;border:0;border-radius:6px;font-weight:600;cursor:pointer">Search</button>
+</div>
+
+
+<table id="entries-table">
+<thead>
+<tr><th>Name</th><th>Category</th><th>Score</th><th>Verified</th><th>Repo</th></tr>
+</thead>
+<tbody id="entries-body">
+<tr><td colspan="5" style="color:var(--muted)">Loading...</td></tr>
+</tbody>
+</table>
+
+
+<h2>What This Is</h2>
+<p>Unlike PyPI, npm, or awesome-lists, every entry in this registry requires cryptographic proof:</p>
+<ul>
+<li><strong>Dilithium5-signed</strong> by the tool owner</li>
+<li><strong>Cross-verified</strong> against a live <code>nti-badge</code> node</li>
+<li><strong>Machine-readable</strong> for AI agent discovery</li>
+<li><strong>Offline-verifiable</strong> forever</li>
+<li><strong>Federated</strong> — anyone can mirror</li>
+</ul>
+
+
+<h2>Submit a Tool</h2>
+<pre>POST /api/register
+{
+  "entry": { ...signed entry... },
+  "strict": true
+}</pre>
+<p>See <a href="/docs.html">docs</a> for the full spec.</p>
+
+
+<script>
+function esc(s){return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+
+async function loadStats(){
+  try {
+    const r = await fetch('/api/stats');
+    const d = await r.json();
+    document.getElementById('stat-entries').textContent = d.total_entries ?? 0;
+    document.getElementById('stat-verified').textContent = d.cross_verified_count ?? 0;
+    document.getElementById('stat-avg').textContent = (d.average_score ?? 0) + '/100';
+    document.getElementById('stat-peers').textContent = d.total_peers ?? 0;
+  } catch (e) {}
+}
+
+
+async function loadEntries(){
+  const q = document.getElementById('q').value.trim();
+  const category = document.getElementById('category').value;
+  const params = new URLSearchParams();
+  if (q) params.set('q', q);
+  if (category) params.set('category', category);
+  const url = '/api/search' + (params.toString() ? '?' + params.toString() : '');
+
+
+  const body = document.getElementById('entries-body');
+  body.innerHTML = '<tr><td colspan="5" style="color:var(--muted)">Loading...</td></tr>';
+  try {
+    const r = await fetch(url);
+    const d = await r.json();
+    if (!d.entries || d.entries.length === 0) {
+      body.innerHTML = '<tr><td colspan="5" style="color:var(--muted)">No entries yet.</td></tr>';
+      return;
+    }
+    body.innerHTML = d.entries.map(e => `
+      <tr>
+        <td><a href="/tool.html?id=${esc(e.id)}">${esc(e.name)}</a></td>
+        <td><span class="pill">${esc(e.category)}</span></td>
+        <td>${esc(e.nti_score)}/100</td>
+        <td class="${e.cross_verified ? 'status-ok' : 'status-fail'}">${e.cross_verified ? '✓' : '—'}</td>
+        <td><a href="${esc(e.repo_url)}" target="_blank" rel="noopener">repo</a></td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    body.innerHTML = '<tr><td colspan="5" style="color:#ef4444">Load failed.</td></tr>';
+  }
+}
+
+
+loadStats();
+loadEntries();
+</script>
+</body>
+</html>

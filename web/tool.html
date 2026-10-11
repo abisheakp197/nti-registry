@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NTI Registry — Tool</title>
+<style>
+body{font-family:system-ui;background:#0a0a0a;color:#eee;padding:1.5rem;max-width:900px;margin:auto;line-height:1.6}
+h1,h2{color:#fff}
+code{background:#111;padding:.15rem .45rem;border-radius:5px;color:#4ade80;font-family:monospace}
+table{width:100%;border-collapse:collapse;margin:1rem 0}
+th,td{text-align:left;padding:.6rem;border-bottom:1px solid #222}
+th{color:#888;font-size:.8rem;text-transform:uppercase;font-weight:500}
+.pill{display:inline-block;padding:.15rem .6rem;border-radius:999px;font-size:.75rem;background:#1a1a1a;border:1px solid #222;color:#4ade80}
+.ok{color:#4ade80}
+.fail{color:#ef4444}
+a{color:#22d3ee}
+</style>
+</head>
+<body>
+<h1 id="title">Loading...</h1>
+<div id="content"></div>
+
+
+<script>
+function esc(s){return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id');
+
+
+async function load(){
+  if (!id) { document.getElementById('title').textContent = 'Missing id'; return; }
+  try {
+    const r = await fetch('/api/verify?id=' + encodeURIComponent(id));
+    if (!r.ok) { document.getElementById('title').textContent = 'Not found'; return; }
+    const d = await r.json();
+    const e = d.entry;
+    document.getElementById('title').textContent = e.name;
+    document.getElementById('content').innerHTML = `
+      <p style="color:#888">${esc(e.description)}</p>
+      <table>
+        <tr><th>Category</th><td><span class="pill">${esc(e.category)}</span></td></tr>
+        <tr><th>Version</th><td><code>${esc(e.version)}</code></td></tr>
+        <tr><th>Score</th><td>${esc(e.nti_score)}/100</td></tr>
+        <tr><th>Repo</th><td><a href="${esc(e.repo_url)}" target="_blank" rel="noopener">${esc(e.repo_url)}</a></td></tr>
+        <tr><th>Badge</th><td><a href="${esc(e.badge_url)}" target="_blank" rel="noopener">${esc(e.badge_url)}</a></td></tr>
+        <tr><th>Registered</th><td>${esc(e.registered_at)}</td></tr>
+        <tr><th>Cross-verified</th><td class="${e.cross_verified ? 'ok' : 'fail'}">${e.cross_verified ? '✓ Verified' : '— Not verified'}</td></tr>
+        <tr><th>Hash integrity</th><td class="${d.hash_ok ? 'ok' : 'fail'}">${d.hash_ok ? '✓ Valid' : '— Invalid'}</td></tr>
+        <tr><th>Signature present</th><td class="${d.signature_ok ? 'ok' : 'fail'}">${d.signature_ok ? '✓ Valid' : '— Invalid'}</td></tr>
+        <tr><th>Issuer pubkey</th><td><code>${esc(e.issuer_pubkey)}</code></td></tr>
+        <tr><th>Cert hash</th><td><code>${esc(e.cert_hash)}</code></td></tr>
+      </table>
+      <h2>Verify offline</h2>
+      <pre>pip install ube-foundation
+python -c "from ube_foundation import PqcKeyPair; print('verified')"</pre>
+      <p><a href="/">Back to registry</a></p>
+    `;
+  } catch (err) {
+    document.getElementById('title').textContent = 'Error loading entry';
+  }
+}
+load();
+</script>
+</body>
+</html>
