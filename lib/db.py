@@ -13,7 +13,14 @@ from typing import Optional, List
 BACKEND: Optional[str] = None
 _redis_client = None
 _file_locks = {}
-LOCAL_STORE_DIR = Path(os.environ.get("NTI_LOCAL_STORE", ".nti-registry-data"))
+def _get_local_store_dir() -> Path:
+    if "NTI_LOCAL_STORE" in os.environ:
+        return Path(os.environ["NTI_LOCAL_STORE"])
+    # If VERCEL environment or default store not writable, fallback to /tmp/.nti-registry-data
+    default_dir = Path(".nti-registry-data")
+    if os.environ.get("VERCEL"):
+        return Path("/tmp/.nti-registry-data")
+    return default_dir
 
 
 def _get_file_lock() -> asyncio.Lock:
@@ -57,8 +64,14 @@ def _redis():
 
 
 async def _file_path(namespace: str) -> Path:
-    LOCAL_STORE_DIR.mkdir(parents=True, exist_ok=True)
-    return LOCAL_STORE_DIR / f"{namespace.replace(':', '_')}.json"
+    store_dir = _get_local_store_dir()
+    try:
+        store_dir.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        # Fallback to /tmp if default directory isn't writable
+        store_dir = Path("/tmp/.nti-registry-data")
+        store_dir.mkdir(parents=True, exist_ok=True)
+    return store_dir / f"{namespace.replace(':', '_')}.json"
 
 
 
@@ -88,10 +101,10 @@ async def hget(namespace: str, key: str) -> Optional[str]:
         r = _redis()
         if r:
             return await r.hget(namespace, key)
-    path = await _file_path(namespace)
-    if not path.exists():
-        return None
     try:
+        path = await _file_path(namespace)
+        if not path.exists():
+            return None
         return json.loads(path.read_text()).get(key)
     except Exception:
         return None
@@ -104,10 +117,10 @@ async def hgetall(namespace: str) -> dict:
         r = _redis()
         if r:
             return await r.hgetall(namespace)
-    path = await _file_path(namespace)
-    if not path.exists():
-        return {}
     try:
+        path = await _file_path(namespace)
+        if not path.exists():
+            return {}
         return json.loads(path.read_text())
     except Exception:
         return {}
