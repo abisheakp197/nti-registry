@@ -2,9 +2,8 @@
 
 
 import pytest
-from lib.entries import build_entry, validate_entry, CATEGORIES
 
-
+from lib.entries import CATEGORIES, build_entry, validate_entry
 
 
 def test_build_entry_minimum():

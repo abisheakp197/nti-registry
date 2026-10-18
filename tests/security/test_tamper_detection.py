@@ -1,10 +1,8 @@
 """Tamper detection across every field."""
 
 
-from lib.signing import sign_payload, verify_integrity
 from lib.entries import build_entry
-
-
+from lib.signing import sign_payload, verify_integrity
 
 
 def _fresh_signed():

@@ -2,13 +2,11 @@
 
 
 import json
-import pytest
 from unittest.mock import patch
+
 from api._handlers.register import handle_register
 from lib.entries import build_entry
 from lib.signing import sign_payload
-
-
 
 
 def _signed(name="x"):
@@ -39,5 +37,5 @@ def test_non_strict_mode_allows_bad_cross_verify(temp_registry_store):
     with patch("api._handlers.register.cross_verify",
                return_value={"ok": False, "reason": "score mismatch"}):
         body = json.dumps({"entry": entry, "strict": False})
-        status, _, payload = handle_register(body)
+        status, _, _payload = handle_register(body)
         assert status == 200

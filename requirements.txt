@@ -1,0 +1,5 @@
+ube-foundation==0.1.7
+httpx==0.28.1
+click==8.5.0
+rich==15.0.0
+redis==5.2.1

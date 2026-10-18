@@ -1,10 +1,8 @@
 """Same input = same hash. Always."""
 
 
-from lib.signing import compute_cert_hash
 from lib.entries import build_entry
-
-
+from lib.signing import compute_cert_hash
 
 
 def test_same_entry_same_hash():

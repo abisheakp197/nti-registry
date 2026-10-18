@@ -1,15 +1,10 @@
 """Registry entry model. Every entry is signed, cross-verified, and portable."""
 
-
-import json
 import uuid
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
+from typing import Any
 
-
-
-
-CATEGORIES = {
+CATEGORIES: set[str] = {
     "framework",     # LangChain, CrewAI, AutoGen, MAF
     "scanner",       # nti-scanner
     "badge",         # nti-badge
@@ -21,10 +16,7 @@ CATEGORIES = {
     "other",
 }
 
-
-PILLARS = {"Identity", "Governance", "Consensus", "Audit", "Persistence"}
-
-
+PILLARS: set[str] = {"Identity", "Governance", "Consensus", "Audit", "Persistence"}
 
 
 def build_entry(
@@ -37,13 +29,12 @@ def build_entry(
     nti_score: int,
     owner_contact: str = "",
     docs_url: str = "",
-) -> dict:
+) -> dict[str, Any]:
     """Build a registry entry. Unsigned. Call sign_payload() to sign."""
     if category not in CATEGORIES:
         raise ValueError(f"Invalid category: {category}. Must be one of {CATEGORIES}")
     if not (0 <= nti_score <= 100):
         raise ValueError("nti_score must be 0-100")
-
 
     return {
         "spec": "NTI-Registry-Entry/1",
@@ -57,14 +48,14 @@ def build_entry(
         "docs_url": docs_url,
         "nti_score": int(nti_score),
         "owner_contact": owner_contact,
-        "registered_at": datetime.now(timezone.utc).isoformat(),
+        "registered_at": datetime.now(UTC).isoformat(),
     }
 
 
-
-
-def validate_entry(entry: dict) -> None:
+def validate_entry(entry: dict[str, Any]) -> None:
     """Raise if entry is malformed."""
+    if not isinstance(entry, dict):
+        raise TypeError("Entry must be a dictionary")
     required = ["spec", "id", "name", "version", "category", "repo_url",
                 "badge_url", "nti_score", "registered_at"]
     for f in required:

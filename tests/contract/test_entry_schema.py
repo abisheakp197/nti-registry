@@ -2,12 +2,8 @@
 
 
 import json
-import pytest
-from lib.entries import build_entry
+
 from lib.signing import sign_payload, verify_integrity, verify_signature
-
-
-
 
 REQUIRED_FIELDS = [
     "spec", "id", "name", "version", "description", "category",

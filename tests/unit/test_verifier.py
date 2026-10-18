@@ -4,8 +4,6 @@
 from lib.verifier import _repo_from_url
 
 
-
-
 def test_repo_from_url_github():
     assert _repo_from_url("https://github.com/owner/repo") == "owner/repo"
 
