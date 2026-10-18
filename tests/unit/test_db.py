@@ -2,9 +2,8 @@
 
 
 import asyncio
+
 from lib import db
-
-
 
 
 def test_backend_file_when_no_env(clean_env=None):

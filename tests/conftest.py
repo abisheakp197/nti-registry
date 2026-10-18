@@ -1,12 +1,10 @@
 """Shared fixtures."""
 
 
-import pytest
 import sys
 from pathlib import Path
 
-
-
+import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -38,6 +36,7 @@ def sample_entry_raw():
 def temp_registry_store(tmp_path, monkeypatch):
     monkeypatch.setenv("NTI_LOCAL_STORE", str(tmp_path / "registry-data"))
     import importlib
+
     import lib.db
     importlib.reload(lib.db)
     yield tmp_path / "registry-data"

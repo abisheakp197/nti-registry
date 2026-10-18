@@ -1,9 +1,12 @@
 """Signing and verification."""
 
 
-from lib.signing import compute_cert_hash, sign_payload, verify_integrity, verify_signature
-
-
+from lib.signing import (
+    compute_cert_hash,
+    sign_payload,
+    verify_integrity,
+    verify_signature,
+)
 
 
 def test_hash_is_deterministic(sample_entry_raw):
