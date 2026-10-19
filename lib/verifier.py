@@ -1,8 +1,34 @@
 """Cross-verify a registry entry against its live badge node."""
 
+import ipaddress
+import socket
 from typing import Any
+from urllib.parse import urlparse
 
 import httpx
+
+
+def validate_url(url: str) -> None:
+    """Validate that a URL scheme is http/https and host does not resolve to a restricted IP."""
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError(f"Invalid URL scheme: {parsed.scheme}")
+
+    hostname = parsed.hostname
+    if not hostname:
+        raise ValueError("Invalid URL: missing hostname")
+
+    try:
+        ip_str = socket.gethostbyname(hostname)
+    except socket.gaierror as e:
+        raise ValueError(f"Could not resolve hostname: {hostname}") from e
+
+    if ip_str == "169.254.169.254":
+        raise ValueError("Forbidden IP address: 169.254.169.254")
+
+    ip = ipaddress.ip_address(ip_str)
+    if ip.is_private or ip.is_loopback or ip.is_link_local:
+        raise ValueError(f"Forbidden IP address: {ip_str}")
 
 
 async def fetch_badge_score(badge_url: str, repo: str, timeout: float = 10.0) -> int | None:
@@ -14,6 +40,7 @@ async def fetch_badge_score(badge_url: str, repo: str, timeout: float = 10.0) ->
     if not badge_url or not repo:
         return None
     url = badge_url.rstrip("/") + "/api/certificate"
+    validate_url(url)
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
             r = await client.get(url, params={"repo": repo})
@@ -25,7 +52,7 @@ async def fetch_badge_score(badge_url: str, repo: str, timeout: float = 10.0) ->
                         score = latest.get("score")
                         if isinstance(score, int):
                             return score
-    except (httpx.HTTPError, ValueError, KeyError):
+    except (httpx.HTTPError, KeyError):
         return None
     return None
 
