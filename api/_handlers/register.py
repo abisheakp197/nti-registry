@@ -43,7 +43,12 @@ async def _register(body_raw: str) -> tuple[int, dict[str, str], bytes]:
                 json.dumps({"error": "invalid_signature"}).encode("utf-8"))
 
     # 3. Cross-verify against the live badge node
-    verification = await cross_verify(entry)
+    try:
+        verification = await cross_verify(entry)
+    except ValueError as e:
+        return (400, {"Content-Type": "application/json"},
+                json.dumps({"error": "invalid_url", "detail": str(e)}).encode("utf-8"))
+
     entry["cross_verified"] = verification["ok"]
     entry["cross_verified_at"] = datetime.now(UTC).isoformat()
 
