@@ -8,27 +8,35 @@ from urllib.parse import urlparse
 import httpx
 
 
+def is_safe_url(url: str) -> bool:
+    """Validates URL to prevent SSRF by ensuring it resolves to a public IP."""
+    try:
+        parsed = urlparse(url)
+        if parsed.scheme not in ("http", "https"):
+            return False
+
+        hostname = parsed.hostname
+        if not hostname:
+            return False
+
+        # Resolve hostname to IP to prevent DNS rebinding
+        ip = socket.gethostbyname(hostname)
+        ip_obj = ipaddress.ip_address(ip)
+
+        # Restrict requests to public IPs only (RFC 1918, loopback, link-local)
+        if ip_obj.is_private or ip_obj.is_loopback or ip_obj.is_link_local or ip_obj.is_reserved:
+            return False
+
+        # Explicitly block cloud metadata endpoints
+        return str(ip) != "169.254.169.254"
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def validate_url(url: str) -> None:
     """Validate that a URL scheme is http/https and host does not resolve to a restricted IP."""
-    parsed = urlparse(url)
-    if parsed.scheme not in ("http", "https"):
-        raise ValueError(f"Invalid URL scheme: {parsed.scheme}")
-
-    hostname = parsed.hostname
-    if not hostname:
-        raise ValueError("Invalid URL: missing hostname")
-
-    try:
-        ip_str = socket.gethostbyname(hostname)
-    except socket.gaierror as e:
-        raise ValueError(f"Could not resolve hostname: {hostname}") from e
-
-    if ip_str == "169.254.169.254":
-        raise ValueError("Forbidden IP address: 169.254.169.254")
-
-    ip = ipaddress.ip_address(ip_str)
-    if ip.is_private or ip.is_loopback or ip.is_link_local:
-        raise ValueError(f"Forbidden IP address: {ip_str}")
+    if not is_safe_url(url):
+        raise ValueError("Security Error: Invalid or restricted URL provided.")
 
 
 async def fetch_badge_score(badge_url: str, repo: str, timeout: float = 10.0) -> int | None:
@@ -40,7 +48,8 @@ async def fetch_badge_score(badge_url: str, repo: str, timeout: float = 10.0) ->
     if not badge_url or not repo:
         return None
     url = badge_url.rstrip("/") + "/api/certificate"
-    validate_url(url)
+    if not is_safe_url(url):
+        raise ValueError("Security Error: Invalid or restricted URL provided.")
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
             r = await client.get(url, params={"repo": repo})
