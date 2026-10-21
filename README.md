@@ -130,3 +130,69 @@ Please refer to [SECURITY.md](SECURITY.md) for vulnerability disclosure procedur
 - nti-badge: https://nti-badge-svs1.vercel.app
 - nti-attack: https://pypi.org/project/nti-attack/
 - nti-benchmark: https://pypi.org/project/nti-benchmark/
+
+---
+
+## Architecture
+
+```mermaid
+graph TD
+    subgraph Client_Layer["Client Layer"]
+        Browser["Web Browser / Dashboard"]
+        DevAPI["Developer / API Client"]
+        PeerNode["Federation Peer Node"]
+    end
+
+    subgraph Serverless_API["Vercel Serverless API Layer"]
+        Router["api/index.py Router<br/>(Method / Path Routing & Payload Check)"]
+
+        subgraph Endpoints["API Endpoints"]
+            PostRegister["POST /api/register"]
+            GetRead["GET /api/list, /api/search,<br/>/api/verify, /api/stats"]
+            FedGet["GET /api/federation"]
+            FedRegister["POST /api/federation/register"]
+            GetSync["GET /api/sync"]
+        end
+
+        SSRF["SSRF Validation Layer<br/>(validate_url: Blocks Private IPs & Metadata)"]
+    end
+
+    subgraph Registry_Core["Registry Core"]
+        SchemaVerifier["Schema & Dilithium5 Verifier<br/>(lib/entries.py & lib/signing.py)"]
+        SyncEngine["Federation Sync Engine<br/>(api/_handlers/sync.py)"]
+
+        subgraph Data_Store["KV / Database Store"]
+            KVDB[("Redis / File KV Store<br/>(nti:registry:entries & nti:registry:peers)")]
+        end
+    end
+
+    BadgeNode["External Live Badge Node<br/>(nti-badge /api/certificate)"]
+
+    %% Client Layer Interactions
+    DevAPI -->|POST /api/register| Router
+    DevAPI -->|GET /api/list, /search, /verify| Router
+    Browser -->|GET /api/list, /stats| Router
+    PeerNode -->|GET /api/federation & /api/sync| Router
+    PeerNode -->|POST /api/federation/register| Router
+
+    %% Routing
+    Router --> PostRegister
+    Router --> GetRead
+    Router --> FedGet
+    Router --> FedRegister
+    Router --> GetSync
+
+    %% POST Registration Flow
+    PostRegister --> SchemaVerifier
+    SchemaVerifier -->|Cross-Verification Request| SSRF
+    SSRF -->|Safe URL HTTP Request| BadgeNode
+    BadgeNode -->|Return Certificate/Score| SchemaVerifier
+    SchemaVerifier -->|Store Verified Entry| KVDB
+
+    %% GET Queries & Federation
+    GetRead -->|Fetch Entry Data| KVDB
+    FedGet -->|Read Peer Registry Manifest| KVDB
+    FedRegister -->|Register Peer Node| KVDB
+    GetSync -->|Pull Upstream Peer Entries| SSRF
+    SyncEngine -->|Import Safe & Signed Entries| KVDB
+```

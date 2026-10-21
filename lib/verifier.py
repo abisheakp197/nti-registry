@@ -36,7 +36,7 @@ def validate_url(url: str) -> str:
     except Exception as e:
         if isinstance(e, ValueError):
             raise
-        raise ValueError(f"URL validation failed: {str(e)}") from e
+        raise ValueError(f"URL validation failed: {e!s}") from e
 
 
 def is_safe_url(url: str) -> bool:
